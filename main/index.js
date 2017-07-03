@@ -1,5 +1,11 @@
 'use strict';
 
+// Example of lambda function using nunjucks template
+// https://github.com/guardian/ses-send-email-lambda/blob/master/src/index.js
+
+// Related interesting reads
+// https://medium.com/engineers-optimizely/using-serverless-to-simplify-and-automate-aws-lambda-442addd80d72
+
 const base_page = `<html>
 <h1>Hi!</h1>
   <form method="POST" action="">
