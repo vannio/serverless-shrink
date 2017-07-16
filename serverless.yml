@@ -11,6 +11,7 @@ provider:
   iamRoleStatements:
     - Action:
         - dynamodb:GetItem
+        - dynamodb:PutItem
       Resource: "arn:aws:dynamodb:eu-west-2:*:table/${opt:stage, self:provider.stage}-shrink-urls"
       Effect: Allow
 

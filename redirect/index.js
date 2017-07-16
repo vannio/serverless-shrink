@@ -20,7 +20,7 @@ module.exports.handler = (event, context, callback) => {
 
     if (err) {
       console.log(err);
-      callback(err);
+      return callback(err);
     }
 
     const item = data.Item;
