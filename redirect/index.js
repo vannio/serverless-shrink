@@ -23,14 +23,16 @@ module.exports.handler = (event, context, callback) => {
       callback(err);
     }
 
-    if (data.Item) {
+    const item = data.Item;
+
+    if (item && item.url) {
       callback(
         null,
         {
           statusCode: 302,
-          body: data.Item.long_url,
+          body: item.url,
           headers: {
-            'Location': data.Item.long_url,
+            'Location': item.url,
             'Content-Type': 'text/plain'
           }
         }
