@@ -20,3 +20,13 @@ functions:
       - http:
           path: /
           method: post
+  redirect:
+    handler: redirect/index.handler
+    events:
+      - http:
+          path: /{slug}
+          method: get
+    environment:
+      URL_INSTALL: https://serverless.com/framework/docs
+      URL_ABCD: https://serverless.com
+      URL_AWS: https://aws.amazon.com
