@@ -11,7 +11,7 @@ provider:
   iamRoleStatements:
     - Action:
         - dynamodb:GetItem
-      Resource: "arn:aws:dynamodb:us-east-1:*:table/${opt:stage, self:provider.stage}-shortened-urls"
+      Resource: "arn:aws:dynamodb:eu-west-2:*:table/${opt:stage, self:provider.stage}-shrink-urls"
       Effect: Allow
 
 functions:
