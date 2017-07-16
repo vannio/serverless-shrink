@@ -4,10 +4,15 @@ frameworkVersion: ">=1.8.0 <2.0.0"
 
 provider:
   name: aws
-  runtime: nodejs4.3
+  runtime: nodejs6.10
   region: eu-west-2
   environment:
     SLS_STAGE: ${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Action:
+        - dynamodb:GetItem
+      Resource: "arn:aws:dynamodb:us-east-1:*:table/${opt:stage, self:provider.stage}-shortened-urls"
+      Effect: Allow
 
 functions:
   main:
@@ -28,10 +33,6 @@ functions:
       - http:
           path: /{slug}
           method: get
-    environment:
-      URL_INSTALL: https://serverless.com/framework/docs
-      URL_ABCD: https://serverless.com
-      URL_AWS: https://aws.amazon.com
 
 resources:
   Resources:
