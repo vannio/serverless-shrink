@@ -32,3 +32,19 @@ functions:
       URL_INSTALL: https://serverless.com/framework/docs
       URL_ABCD: https://serverless.com
       URL_AWS: https://aws.amazon.com
+
+resources:
+  Resources:
+    LinkDB:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: slug
+            AttributeType: S
+        KeySchema:
+          - AttributeName: slug
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 2
+          WriteCapacityUnits: 2
+        TableName: "${opt:stage, self:provider.stage}-shrink-urls"
