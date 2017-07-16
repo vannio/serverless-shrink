@@ -27,9 +27,10 @@ module.exports.handler = (event, context, callback) => {
   console.log(JSON.stringify(event));
 
   const submitted = querystring.parse(event.body).link;
-  const prefix = event.headers.Referer || 'http://vann.io';
+  const prefix = event.headers.Referer || 'http://vann.io/';
 
-  console.log(`URL submitted: ${submitted}`);
+  console.log('URL submitted: ' + submitted);
+
   return new Promise((resolve, reject) => {
     resolve(
       crypto.randomBytes(8)
@@ -40,39 +41,38 @@ module.exports.handler = (event, context, callback) => {
         .substring(0, 4)
     )
   }).then(slug => {
-      console.log(`Trying to save URL: ${submitted}, slug: ${slug}`);
+    console.log(`Trying to save URL: ${submitted}, slug: ${slug}`);
 
-      return docClient.put({
-        TableName: tableName,
-        Item: {
-          slug: slug,
-          url: submitted
-        },
-        Expected: {
-          url: { Exists: false }
-        }
-      }).promise().then(() => { return slug })
-    }).then((slug) => {
-      console.log('Success');
+    return docClient.put({
+      TableName: tableName,
+      Item: {
+        slug: slug,
+        url: submitted
+      },
+      Expected: {
+        url: {Exists: false}
+      }
+    }).promise().then(() => { return slug; });
+  }).then((slug) => {
+    console.log('Success');
 
-      return callback(
-        null,
-        {
-          statusCode: 200,
-          body: RenderPage(path.join(prefix, slug).replace(':/', '://'), prefix),
-          headers: {'Content-Type': 'text/html'}
-        }
-      )
-    }).catch(error => {
-      console.log('Oh no, hit an error! ' + error)
+    return callback(
+      null,
+      {
+        statusCode: 200,
+        body: RenderPage(path.join(prefix, slug).replace(':/', '://'), prefix),
+        headers: {'Content-Type': 'text/html'}
+      }
+    );
+  }).catch(error => {
+    console.log('Oh no, hit an error! ' + error);
 
-      callback(
-        null,
-        {
-          statusCode: 400,
-          body: 'Something went wrong, please try again'
-        }
-      )
-    });
+    callback(
+      null,
+      {
+        statusCode: 400,
+        body: 'Something went wrong, please try again'
+      }
+    );
   });
-}
+};
