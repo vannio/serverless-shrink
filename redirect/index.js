@@ -2,7 +2,7 @@
 
 const AWS = require('aws-sdk');
 
-const tableName = `${process.env.SLS_STAGE}-shrink-urls`;
+const tableName = process.env.DDB_Table;
 const docClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports.handler = (event, context, callback) => {

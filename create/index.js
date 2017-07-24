@@ -6,7 +6,7 @@ const path = require('path');
 const crypto = require('crypto');
 AWS.config.setPromisesDependency(Promise);
 
-const tableName = `${process.env.SLS_STAGE}-shrink-urls`;
+const tableName = process.env.DDB_Table;
 const docClient = new AWS.DynamoDB.DocumentClient();
 
 function RenderPage (link, submitted) {

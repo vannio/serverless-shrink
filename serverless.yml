@@ -16,11 +16,21 @@ provider:
   region: eu-west-2
   environment:
     SLS_STAGE: ${self:custom.stage}
+    DDB_Table: {Ref: LinkDB}
   iamRoleStatements:
     - Action:
         - dynamodb:GetItem
         - dynamodb:PutItem
-      Resource: "arn:aws:dynamodb:eu-west-2:*:table/${self:custom.stage}-shrink-urls"
+      Resource:
+        "Fn::Join":
+          - ""
+          -
+            - "arn:aws:dynamodb:"
+            - Ref: "AWS::Region"
+            - ":"
+            - Ref: "AWS::AccountId"
+            - ":table/"
+            - Ref: LinkDB
       Effect: Allow
 
 functions:
@@ -55,4 +65,3 @@ resources:
           - AttributeName: slug
             KeyType: HASH
         ProvisionedThroughput: ${self:custom.${self:custom.stage}DynamoCapacity}
-        TableName: "${self:custom.stage}-shrink-urls"
