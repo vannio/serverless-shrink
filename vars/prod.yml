@@ -1,0 +1,4 @@
+DomainName: go.vann.io
+DynamoCapacity:
+  ReadCapacityUnits: 5
+  WriteCapacityUnits: 5

@@ -4,12 +4,7 @@ frameworkVersion: ">=1.8.0 <2.0.0"
 
 custom:
   stage: ${opt:stage, self:provider.stage}
-  devDynamoCapacity:
-    ReadCapacityUnits: 1
-    WriteCapacityUnits: 1
-  prodDynamoCapacity:
-    ReadCapacityUnits: 5
-    WriteCapacityUnits: 5
+  vars: ${file(vars/${self:custom.stage}.yml)}
 provider:
   name: aws
   runtime: nodejs6.10
@@ -64,4 +59,10 @@ resources:
         KeySchema:
           - AttributeName: slug
             KeyType: HASH
-        ProvisionedThroughput: ${self:custom.${self:custom.stage}DynamoCapacity}
+        ProvisionedThroughput: ${self:custom.vars.DynamoCapacity}
+    CustomDomainMap:
+      Type: "AWS::ApiGateway::BasePathMapping"
+      Properties:
+        DomainName: ${self:custom.vars.DomainName}
+        Stage: ${self:custom.stage}
+        RestApiId: {Ref: ApiGatewayRestApi}
