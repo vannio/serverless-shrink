@@ -2,17 +2,25 @@ service: shrink
 
 frameworkVersion: ">=1.8.0 <2.0.0"
 
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  devDynamoCapacity:
+    ReadCapacityUnits: 1
+    WriteCapacityUnits: 1
+  prodDynamoCapacity:
+    ReadCapacityUnits: 5
+    WriteCapacityUnits: 5
 provider:
   name: aws
   runtime: nodejs6.10
   region: eu-west-2
   environment:
-    SLS_STAGE: ${opt:stage, self:provider.stage}
+    SLS_STAGE: ${self:custom.stage}
   iamRoleStatements:
     - Action:
         - dynamodb:GetItem
         - dynamodb:PutItem
-      Resource: "arn:aws:dynamodb:eu-west-2:*:table/${opt:stage, self:provider.stage}-shrink-urls"
+      Resource: "arn:aws:dynamodb:eu-west-2:*:table/${self:custom.stage}-shrink-urls"
       Effect: Allow
 
 functions:
@@ -46,7 +54,5 @@ resources:
         KeySchema:
           - AttributeName: slug
             KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 2
-          WriteCapacityUnits: 2
-        TableName: "${opt:stage, self:provider.stage}-shrink-urls"
+        ProvisionedThroughput: ${self:custom.${self:custom.stage}DynamoCapacity}
+        TableName: "${self:custom.stage}-shrink-urls"
