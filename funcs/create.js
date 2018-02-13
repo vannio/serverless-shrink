@@ -1,50 +1,51 @@
 'use strict';
 
+const path = require('path');
+const crypto = require('crypto');
 const AWS = require('aws-sdk');
 AWS.config.setPromisesDependency(Promise);
 
-const path = require('path');
-const crypto = require('crypto');
-const tableName = process.env.DDB_Table;
 const documentClient = new AWS.DynamoDB.DocumentClient();
+const tableName = process.env.DDB_Table;
+const rootPath = process.env.ROOT_PATH;
 const headers = { 'Content-Type': 'application/json' };
 
 module.exports.handler = (event, context, callback) => {
   console.log('EVENT', JSON.stringify(event));
   const body = JSON.parse(event.body);
+
   if (!body || !body.url) {
     const message = 'No URL submitted';
     console.log('ERROR', message);
+
     callback(null, {
       statusCode: 400,
       headers,
       body: JSON.stringify({ message }),
     });
   }
+
   const url = body.url;
-  return new Promise((resolve) => {
-    resolve(
-      crypto.randomBytes(8)
-        .toString('base64')
-        .replace(/[=+/]/g, '')
-        .substring(0, 4)
-    );
+  const slug =  crypto.randomBytes(8)
+    .toString('base64')
+    .replace(/[=+/]/g, '')
+    .substring(0, 4);
+
+  documentClient.put({
+    TableName: tableName,
+    Item: {
+      url,
+      slug,
+    },
+    Expected: {
+      url: { Exists: false },
+    },
   })
-  .then(slug => (
-    documentClient.put({
-      TableName: tableName,
-      Item: {
-        slug,
-        url,
-      },
-      Expected: {
-        url: { Exists: false },
-      },
-    }))
-    .promise()
-    .then(() => slug)
-  )
-  .then(slug =>
+  .promise()
+  .then(() => {
+    const shrink = path.join(rootPath, slug).replace(':/', '://');
+    console.log('SHRUNK', `${url} -> ${shrink}`);
+
     callback(null, {
       statusCode: 200,
       headers,
@@ -52,14 +53,15 @@ module.exports.handler = (event, context, callback) => {
         message: 'Success',
         data: {
           url,
-          shrink: path.join(process.env.ROOT_PATH, slug).replace(':/', '://')
+          shrink
         }
-      }),
+      })
     })
-  )
+  })
   .catch(error => {
     const message = JSON.stringify(error);
     console.log('ERROR', message);
+
     callback(null, {
       statusCode: 500,
       headers,

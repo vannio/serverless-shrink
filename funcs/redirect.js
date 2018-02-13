@@ -1,29 +1,28 @@
 'use strict';
 
 const AWS = require('aws-sdk');
-const tableName = process.env.DDB_Table;
+AWS.config.setPromisesDependency(Promise);
+
 const documentClient = new AWS.DynamoDB.DocumentClient();
+const tableName = process.env.DDB_Table;
 const headers = { 'Content-Type': 'application/json' };
 
 module.exports.handler = (event, context, callback) => {
   console.log('EVENT', JSON.stringify(event));
   const slug = event.pathParameters.slug;
+
   documentClient.get({
     TableName: tableName,
     Key: { slug },
-  }, (error, data) => {
-    if (error) {
-      const message = JSON.stringify(error);
-      console.log('ERROR', message);
-      return callback(null, {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ message }),
-      });
-    }
+  })
+  .promise()
+  .then(data => {
     const item = data.Item;
+
     if (item && item.url) {
-      callback(null, {
+      console.log('REDIRECT', `${event.path} -> ${item.url}`);
+
+      return callback(null, {
         statusCode: 302,
         headers: {
           Location: item.url,
@@ -31,12 +30,25 @@ module.exports.handler = (event, context, callback) => {
         },
         body: item.url
       });
-    } else {
-      callback(null, {
-        statusCode: 404,
-        headers,
-        body: JSON.stringify({ message: 'URL not found' }),
-      });
     }
+
+    const message = `Cannot find shortened URL for ${event.path}`;
+    console.log('ERROR', message);
+
+    callback(null, {
+      statusCode: 404,
+      headers,
+      body: JSON.stringify({ message }),
+    });
+  })
+  .catch(error => {
+    const message = JSON.stringify(error);
+    console.log('ERROR', message);
+
+    callback(null, {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ message }),
+    });
   });
 };
