@@ -11,6 +11,7 @@ provider:
   region: eu-west-2
   environment:
     SLS_STAGE: ${self:custom.stage}
+    ROOT_PATH: ${self:custom.vars.DomainName}
     DDB_Table: {Ref: LinkDB}
   iamRoleStatements:
     - Action:
@@ -29,12 +30,6 @@ provider:
       Effect: Allow
 
 functions:
-  main:
-    handler: funcs/main.handler
-    events:
-      - http:
-          path: /
-          method: get
   create:
     handler: funcs/create.handler
     events:

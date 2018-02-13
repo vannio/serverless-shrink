@@ -13,15 +13,15 @@ module.exports.handler = (event, context, callback) => {
   console.log('EVENT', JSON.stringify(event));
   const body = JSON.parse(event.body);
   if (!body || !body.url) {
-    console.log(`ERROR No URL submitted`);
+    const message = 'No URL submitted';
+    console.log('ERROR', message);
     callback(null, {
       statusCode: 400,
-      body: JSON.stringify({ message: `No URL submitted` }),
       headers,
+      body: JSON.stringify({ message }),
     });
   }
   const url = body.url;
-  const prefix = event.headers.Referer;
   return new Promise((resolve) => {
     resolve(
       crypto.randomBytes(8)
@@ -47,22 +47,23 @@ module.exports.handler = (event, context, callback) => {
   .then(slug =>
     callback(null, {
       statusCode: 200,
+      headers,
       body: JSON.stringify({
         message: 'Success',
         data: {
           url,
-          shrink: path.join(prefix, slug).replace(':/', '://')
+          shrink: path.join(process.env.ROOT_PATH, slug).replace(':/', '://')
         }
       }),
-      headers,
     })
   )
   .catch(error => {
-    console.log(`ERROR ${error}`);
+    const message = JSON.stringify(error);
+    console.log('ERROR', message);
     callback(null, {
       statusCode: 500,
-      body: JSON.stringify({ message: error }),
       headers,
+      body: JSON.stringify({ message }),
     });
   });
 };
