@@ -1,43 +1,54 @@
 'use strict';
 
 const AWS = require('aws-sdk');
-const tableName = process.env.DDB_Table;
+AWS.config.setPromisesDependency(Promise);
+
 const documentClient = new AWS.DynamoDB.DocumentClient();
+const tableName = process.env.DDB_Table;
+const headers = { 'Content-Type': 'application/json' };
 
 module.exports.handler = (event, context, callback) => {
-  console.log(JSON.stringify(event));
+  console.log('EVENT', JSON.stringify(event));
   const slug = event.pathParameters.slug;
-  documentClient.get(
-    {
-      TableName: tableName,
-      Key: { slug },
-    },
-    (err, data) => {
-      console.log(data);
-      if (err) {
-        console.log(err);
-        return callback(err);
-      }
 
-      const item = data.Item;
-      if (item && item.url) {
-        callback(null, {
-          statusCode: 302,
-          body: item.url,
-          headers: {
-            Location: item.url,
-            'Content-Type': 'text/plain',
-          },
-        });
-      } else {
-        callback(null, {
-          statusCode: 404,
-          body: "Shortened URL doesn't exist!",
-          headers: {
-            'Content-Type': 'text/plain',
-          },
-        });
-      }
-    },
-  );
+  documentClient.get({
+    TableName: tableName,
+    Key: { slug },
+  })
+  .promise()
+  .then(data => {
+    const item = data.Item;
+
+    if (item && item.url) {
+      console.log('REDIRECT', `${event.path} -> ${item.url}`);
+
+      return callback(null, {
+        statusCode: 302,
+        headers: {
+          Location: item.url,
+          'Content-Type': 'text/plain',
+        },
+        body: item.url
+      });
+    }
+
+    const message = `Cannot find shortened URL for ${event.path}`;
+    console.log('ERROR', message);
+
+    callback(null, {
+      statusCode: 404,
+      headers,
+      body: JSON.stringify({ message }),
+    });
+  })
+  .catch(error => {
+    const message = JSON.stringify(error);
+    console.log('ERROR', message);
+
+    callback(null, {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ message }),
+    });
+  });
 };
