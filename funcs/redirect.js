@@ -13,7 +13,7 @@ module.exports.handler = (event, context, callback) => {
 
   documentClient.get({
     TableName: tableName,
-    Key: { slug },
+    Key: { slug }
   })
   .promise()
   .then(data => {
@@ -38,17 +38,17 @@ module.exports.handler = (event, context, callback) => {
     callback(null, {
       statusCode: 404,
       headers,
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message })
     });
   })
   .catch(error => {
-    const message = JSON.stringify(error);
-    console.log('ERROR', message);
+    const body = JSON.stringify(error);
+    console.log('ERROR', body);
 
     callback(null, {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ message }),
+      body
     });
   });
 };

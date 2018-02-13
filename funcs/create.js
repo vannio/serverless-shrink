@@ -21,29 +21,29 @@ module.exports.handler = (event, context, callback) => {
     callback(null, {
       statusCode: 400,
       headers,
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message })
     });
   }
 
   const url = body.url;
-  const slug =  crypto.randomBytes(8)
-    .toString('base64')
-    .replace(/[=+/]/g, '')
-    .substring(0, 4);
+  const slug = crypto.createHash('sha256')
+    .update(url)
+    .digest('hex')
+    .substring(0, 10);
+  const shrink = path.join(rootPath, slug).replace(':/', '://');
 
   documentClient.put({
     TableName: tableName,
     Item: {
       url,
-      slug,
+      slug
     },
     Expected: {
       url: { Exists: false },
-    },
+    }
   })
   .promise()
   .then(() => {
-    const shrink = path.join(rootPath, slug).replace(':/', '://');
     console.log('SHRUNK', `${url} -> ${shrink}`);
 
     callback(null, {
@@ -59,13 +59,27 @@ module.exports.handler = (event, context, callback) => {
     })
   })
   .catch(error => {
-    const message = JSON.stringify(error);
-    console.log('ERROR', message);
+    if (error.code === 'ConditionalCheckFailedException') {
+      return callback(null, {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          message: 'Already exists',
+          data: {
+            url,
+            shrink
+          }
+        })
+      });
+    }
+
+    const body = JSON.stringify(error);
+    console.log('ERROR', body);
 
     callback(null, {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ message }),
+      body
     });
   });
 };

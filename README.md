@@ -1,7 +1,23 @@
 # Serverless Shrink
 
-URL shortener experiment built with
-[Serverless framework](https://serverless.com)
+URL shortener API built with the
+[Serverless framework](https://serverless.com).
+
+`POST` to https://go.vann.io with JSON payload to shorten a URL:
+```shell
+curl -H "Content-Type: application/json" -X POST -d '{"url": "http://www.superlongridiculousurl.com"}' https://go.vann.io
+```
+
+Example response:
+```json
+{
+  "message": "Success",
+  "data": {
+    "url": "http://www.superlongridiculousurl.com",
+    "shrink": "go.vann.io/a43f3e1ce0"
+  }
+}
+```
 
 ---
 
