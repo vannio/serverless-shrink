@@ -1,13 +1,13 @@
 'use strict';
 
 const AWS = require('aws-sdk');
+AWS.config.setPromisesDependency(Promise);
+
 const querystring = require('querystring');
 const path = require('path');
 const crypto = require('crypto');
-AWS.config.setPromisesDependency(Promise);
-
 const tableName = process.env.DDB_Table;
-const docClient = new AWS.DynamoDB.DocumentClient();
+const documentClient = new AWS.DynamoDB.DocumentClient();
 
 const render = (link, submitted) => `
 <html>
@@ -23,19 +23,17 @@ module.exports.handler = (event, context, callback) => {
   const submitted = querystring.parse(event.body).link;
   const prefix = event.headers.Referer || 'http://vann.io/';
   console.log(`URL submitted: ${submitted}`);
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     resolve(
       crypto.randomBytes(8)
         .toString('base64')
-        // take out chars that mean something in URLs
         .replace(/[=+/]/g, '')
-        // 4 chars gives us 14776336 options
         .substring(0, 4)
-    )
+    );
   })
     .then(slug => {
       console.log(`Trying to save URL: ${submitted}, slug: ${slug}`);
-      return docClient
+      return documentClient
         .put({
           TableName: tableName,
           Item: {
@@ -54,7 +52,7 @@ module.exports.handler = (event, context, callback) => {
       const link = path.join(prefix, slug).replace(':/', '://');
       return callback(null, {
         statusCode: 200,
-        body: render(link, prefix),
+        body: render(link, submitted),
         headers: { 'Content-Type': 'text/html' },
       });
     })
