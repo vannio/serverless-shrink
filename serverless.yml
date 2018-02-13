@@ -30,19 +30,19 @@ provider:
 
 functions:
   main:
-    handler: main/index.handler
+    handler: funcs/main.handler
     events:
       - http:
           path: /
           method: get
   create:
-    handler: create/index.handler
+    handler: funcs/create.handler
     events:
       - http:
           path: /
           method: post
   redirect:
-    handler: redirect/index.handler
+    handler: funcs/redirect.handler
     events:
       - http:
           path: /{slug}
@@ -63,9 +63,9 @@ resources:
     # To avoid bug: https://github.com/serverless/serverless/issues/2233
     # Deploy with the CustomerDomainMap section commented out, then redeploy with it uncommented
     # There is a bug in the build dependencies and this is created too early
-    CustomDomainMap:
-      Type: "AWS::ApiGateway::BasePathMapping"
-      Properties:
-        DomainName: ${self:custom.vars.DomainName}
-        Stage: ${self:custom.stage}
-        RestApiId: {Ref: ApiGatewayRestApi}
+#    CustomDomainMap:
+#      Type: "AWS::ApiGateway::BasePathMapping"
+#      Properties:
+#        DomainName: ${self:custom.vars.DomainName}
+#        Stage: ${self:custom.stage}
+#        RestApiId: {Ref: ApiGatewayRestApi}
