@@ -11,7 +11,7 @@ module.exports.handler = (event, context, callback) => {
   console.log('EVENT', JSON.stringify(event));
   const slug = event.pathParameters.slug;
 
-  documentClient.get({
+  return documentClient.get({
     TableName: tableName,
     Key: { slug }
   })
@@ -35,7 +35,7 @@ module.exports.handler = (event, context, callback) => {
     const message = `Cannot find shortened URL for ${event.path}`;
     console.log('ERROR', message);
 
-    callback(null, {
+    return callback(null, {
       statusCode: 404,
       headers,
       body: JSON.stringify({ message })
@@ -45,10 +45,9 @@ module.exports.handler = (event, context, callback) => {
     const body = JSON.stringify(error);
     console.log('ERROR', body);
 
-    callback(null, {
+    return callback(null, {
       statusCode: 500,
-      headers,
-      body
+      headers
     });
   });
 };

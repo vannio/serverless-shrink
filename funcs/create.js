@@ -18,7 +18,7 @@ module.exports.handler = (event, context, callback) => {
     const message = 'No URL submitted';
     console.log('ERROR', message);
 
-    callback(null, {
+    return callback(null, {
       statusCode: 400,
       headers,
       body: JSON.stringify({ message })
@@ -32,7 +32,7 @@ module.exports.handler = (event, context, callback) => {
     .substring(0, 10);
   const shrink = path.join(rootPath, slug).replace(':/', '://');
 
-  documentClient.put({
+  return documentClient.put({
     TableName: tableName,
     Item: {
       url,
@@ -46,7 +46,7 @@ module.exports.handler = (event, context, callback) => {
   .then(() => {
     console.log('SHRUNK', `${url} -> ${shrink}`);
 
-    callback(null, {
+    return callback(null, {
       statusCode: 200,
       headers,
       body: JSON.stringify({
@@ -76,7 +76,7 @@ module.exports.handler = (event, context, callback) => {
     const body = JSON.stringify(error);
     console.log('ERROR', body);
 
-    callback(null, {
+    return callback(null, {
       statusCode: 500,
       headers,
       body

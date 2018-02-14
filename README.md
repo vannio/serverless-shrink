@@ -3,7 +3,7 @@
 URL shortener API built with the
 [Serverless framework](https://serverless.com).
 
-`POST` to https://go.vann.io with JSON payload to shorten a URL:
+`POST` a URL to https://go.vann.io:
 ```shell
 curl -H "Content-Type: application/json" -X POST -d '{"url": "http://www.superlongridiculousurl.com"}' https://go.vann.io
 ```
