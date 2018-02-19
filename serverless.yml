@@ -56,7 +56,7 @@ resources:
             KeyType: HASH
         ProvisionedThroughput: ${self:custom.vars.DynamoCapacity}
     # To avoid bug: https://github.com/serverless/serverless/issues/2233
-    # Deploy with the CustomerDomainMap section commented out, then redeploy with it uncommented
+    # Deploy with the CustomDomainMap section commented out, then redeploy with it uncommented
     # There is a bug in the build dependencies and this is created too early
     CustomDomainMap:
       Type: "AWS::ApiGateway::BasePathMapping"

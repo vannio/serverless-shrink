@@ -29,7 +29,7 @@ module.exports.handler = (event, context, callback) => {
   const slug = crypto.createHash('sha256')
     .update(url)
     .digest('hex')
-    .substring(0, 10);
+    .substring(0, 6);
   const shrink = path.join(rootPath, slug).replace(':/', '://');
 
   return documentClient.put({
