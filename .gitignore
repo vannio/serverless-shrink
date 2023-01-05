@@ -1,2 +1,4 @@
 .serverless/
 .idea/
+*.log
+node_modules/

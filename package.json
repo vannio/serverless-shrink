@@ -1,0 +1,14 @@
+{
+  "name": "serverless-shrink",
+  "version": "1.0.0",
+  "description": "URL shortener API built with the Serverless framework",
+  "author": "Van Le (https://vann.io)",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.109",
+    "@types/aws-sdk": "^2.7.0",
+    "@types/node": "^18.11.18",
+    "serverless-plugin-typescript": "^2.1.4",
+    "typescript": "^4.9.4"
+  }
+}

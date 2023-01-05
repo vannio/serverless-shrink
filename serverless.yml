@@ -5,6 +5,7 @@ frameworkVersion: '3'
 custom:
   stage: ${opt:stage, self:provider.stage}
   vars: ${file(vars/${self:custom.stage}.yml)}
+
 provider:
   name: aws
   runtime: nodejs14.x
@@ -33,19 +34,19 @@ provider:
 
 functions:
   health:
-    handler: funcs/create.health
+    handler: src/index.health
     events:
       - http:
           path: /
           method: get
   create:
-    handler: funcs/create.handler
+    handler: src/index.create
     events:
       - http:
           path: /
           method: post
   redirect:
-    handler: funcs/redirect.handler
+    handler: src/index.redirect
     events:
       - http:
           path: /{slug}
@@ -72,3 +73,6 @@ resources:
         DomainName: ${self:custom.vars.DomainName}
         Stage: ${self:custom.stage}
         RestApiId: {Ref: ApiGatewayRestApi}
+
+plugins:
+  - serverless-plugin-typescript
