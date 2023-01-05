@@ -45,9 +45,9 @@ curl --location --request POST 'https://go.vann.io' \
 1. Comment out the `CustomDomainMap` block in `serverless.yml`<sup>\*</sup>
 1. **Run `serverless deploy --stage <stage>` where stage is dev or prod**, eg. `--stage
    dev`
-1. Set up API Gateway custom domain name mapping
-1. Add DNS records to point your domain to API Gateway<sup>\*</sup>
-1. Restore the `CustomDomainMap` block in `serverless.yml`<sup>\*</sup>
+1. Set up your custom domain name mapping in API Gateway
+1. Create and verify the accompanying SSL cert in the AWS Certificate Manager<sup>\*</sup>
+1. Restore (uncomment) the `CustomDomainMap` block in `serverless.yml`<sup>\*</sup>
 1. Re-run `serverless deploy --stage <stage>`<sup>\*</sup>
 
 <sup>\*</sup>on initial deploy
