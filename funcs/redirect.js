@@ -7,7 +7,7 @@ const documentClient = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.DDB_Table;
 const headers = { 'Content-Type': 'application/json' };
 
-module.exports.handler = (event, context, callback) => {
+module.exports.handler = (event, _context, callback) => {
   console.log('EVENT', JSON.stringify(event));
   const slug = event.pathParameters.slug;
 

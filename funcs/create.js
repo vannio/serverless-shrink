@@ -10,7 +10,7 @@ const tableName = process.env.DDB_Table;
 const rootPath = process.env.ROOT_PATH;
 const headers = { 'Content-Type': 'application/json' };
 
-module.exports.handler = (event, context, callback) => {
+module.exports.handler = (event, _context, callback) => {
   console.log('EVENT', JSON.stringify(event));
   const body = JSON.parse(event.body);
 

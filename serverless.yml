@@ -32,14 +32,20 @@ provider:
           Effect: Allow
 
 functions:
+  health:
+    handler: funcs/create.health
+    events:
+      - http:
+          path: /
+          method: get
   create:
-    handler: src/create.handler
+    handler: funcs/create.handler
     events:
       - http:
           path: /
           method: post
   redirect:
-    handler: src/redirect.handler
+    handler: funcs/redirect.handler
     events:
       - http:
           path: /{slug}
