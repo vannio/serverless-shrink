@@ -24,14 +24,14 @@ export const getRedirectURL = async (
   if (location) {
     return {
       statusCode: 302,
-      data: { location }
-    }
+      data: { location },
+    };
   }
 
   return {
     statusCode: 404,
     error: {
-      message: `Cannot find shortened URL for ${event.path}`
-    }
-  }
+      message: `Cannot find shortened URL for ${event.path}`,
+    },
+  };
 };

@@ -40,8 +40,8 @@ export const shortenURL = async (
 
   try {
     await insertSlug(url, slug);
-  } catch(e) {
-    if (e.code !== 'ConditionalCheckFailedException') {
+  } catch (e) {
+    if (e.code !== "ConditionalCheckFailedException") {
       // url/slug combo already exists
       throw e;
     }
