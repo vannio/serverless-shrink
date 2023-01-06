@@ -14,6 +14,12 @@ export const config = {
   tableName: process.env.DDB_Table!,
 } as const;
 
+const corsHeaders = {
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+};
+
 const logJSON = (event: string, payload: any) =>
   console.log(event, JSON.stringify(payload));
 
@@ -24,6 +30,19 @@ export const health = async (
 
   return {
     statusCode: 200,
+    headers: corsHeaders,
+    body: "OK",
+  };
+};
+
+export const options = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  logJSON("EVENT", event);
+
+  return {
+    statusCode: 204,
+    headers: corsHeaders,
     body: "OK",
   };
 };
@@ -41,6 +60,7 @@ export const create = async (
   return {
     statusCode,
     headers: {
+      ...corsHeaders,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(res),
@@ -58,6 +78,7 @@ export const redirect = async (
     return {
       statusCode,
       headers: {
+        ...corsHeaders,
         Location: res.data.location,
         "Content-Type": "text/plain",
       },
