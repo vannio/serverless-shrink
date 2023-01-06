@@ -3,15 +3,18 @@
 URL shortener API built with the
 [Serverless framework](https://serverless.com).
 
-`POST` a URL to https://go.vann.io:
-```shell
-curl -H "Content-Type: application/json" -X POST -d '{"url": "http://www.superlongridiculousurl.com"}' https://go.vann.io
+## Usage
+
+#### Request
+```bash
+curl --location --request POST 'https://go.vann.io' \
+--header 'Content-Type: application/json' \
+--data-raw '{"url": "http://www.superlongridiculousurl.com"}'
 ```
 
-Example response:
+#### Response
 ```json
 {
-  "message": "Success",
   "data": {
     "url": "http://www.superlongridiculousurl.com",
     "shrink": "go.vann.io/a43f3e1ce0"
@@ -21,13 +24,14 @@ Example response:
 
 ---
 
+## Development
+
 #### Prerequisites
 
-* [Node](https://nodejs.org)
-* [Serverless framework](https://serverless.com/framework/docs/getting-started)
+* [Node](https://nodejs.org) 14+
+* [Serverless framework](https://serverless.com/framework/docs/getting-started) 3+
 * [AWS CLI](https://aws.amazon.com/cli)
 
----
 
 #### Initialise
 
@@ -39,12 +43,12 @@ Example response:
 
 1. Ensure stage config is set correctly in the `vars` directory<sup>\*</sup>
 1. Comment out the `CustomDomainMap` block in `serverless.yml`<sup>\*</sup>
-1. **Run `sls deploy --stage <stage>` where stage is dev or prod**, eg. `--stage
+1. **Run `serverless deploy --stage <stage>` where stage is dev or prod**, eg. `--stage
    dev`
-1. Set up API Gateway custom domain name mapping
-1. Add DNS records to point your domain to API Gateway<sup>\*</sup>
-1. Restore the `CustomDomainMap` block in `serverless.yml`<sup>\*</sup>
-1. Re-run `sls deploy --stage <stage>`<sup>\*</sup>
+1. Set up your custom domain name mapping in API Gateway
+1. Create and verify the accompanying SSL cert in the AWS Certificate Manager<sup>\*</sup>
+1. Restore (uncomment) the `CustomDomainMap` block in `serverless.yml`<sup>\*</sup>
+1. Re-run `serverless deploy --stage <stage>`<sup>\*</sup>
 
 <sup>\*</sup>on initial deploy
 
@@ -53,4 +57,4 @@ Example response:
 * Logs can be found in CloudWatch
 * If things are unsalvageable, you can delete everything to start from scratch:
   1. Remove custom domain name mapping from API Gateway manually
-  1. Run `sls remove --stage <stage>`
+  1. Run `serverless remove --stage <stage>`
